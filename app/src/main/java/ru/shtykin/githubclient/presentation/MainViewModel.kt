@@ -28,8 +28,12 @@ class MainViewModel(
         }
     }
 
-    fun onSplashFinished() {
+    fun onMainScreenOpened() {
         _uiState.value = ScreenState.MainScreen("")
+    }
+
+    fun onDownloadScreenOpened() {
+        _uiState.value = ScreenState.DownloadsScreen("")
     }
 
     private suspend fun loadInitData() {

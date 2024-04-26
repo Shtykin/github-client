@@ -1,5 +1,6 @@
 package ru.shtykin.githubclient.presentation.screens.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,12 +62,17 @@ import ru.shtykin.githubclient.presentation.state.ScreenState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    uiState: ScreenState
+    uiState: ScreenState,
+    onDownloadClick: (() -> Unit)?,
+    onBackClick: (() -> Unit)?,
 ) {
-    val searchFocusRequester = FocusRequester()
-    LaunchedEffect(key1 = null) {
-        searchFocusRequester.requestFocus()
-    }
+//    BackHandler { onBackClick?.invoke() }
+
+//    val searchFocusRequester = remember { FocusRequester() }
+//    val searchFocusRequester = FocusRequester()
+//    LaunchedEffect(key1 = null) {
+//        searchFocusRequester.requestFocus()
+//    }
     if (uiState is ScreenState.MainScreen) {
         var user by remember { mutableStateOf(TextFieldValue(text = "")) }
 
@@ -84,7 +90,8 @@ fun MainScreen(
                             onValueChange = { user = it },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .focusRequester(searchFocusRequester),
+//                                .focusRequester(searchFocusRequester)
+                            ,
                             placeholder = {
                                 Text(
                                     text = "Search user...",
@@ -121,7 +128,7 @@ fun MainScreen(
                                 )
                             }
                         }
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = { onDownloadClick?.invoke() }) {
                             Icon(
                                 Icons.Outlined.Download,
                                 contentDescription = null,
