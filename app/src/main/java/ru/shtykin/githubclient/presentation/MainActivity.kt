@@ -32,19 +32,30 @@ class MainActivity : ComponentActivity() {
                         uiState = uiState,
                         onInitLoading = {viewModel.initLoading()},
                         onFinishLoading = {
-                            viewModel.onSplashFinished()
+                            viewModel.onMainScreenOpened()
                             navHostController.navigate(Screen.Main.route) {
-                                popUpTo(Screen.Splash.route) {
-                                    inclusive = true
-                                }
+                                popUpTo(0)
                             }
                         }
                     ) },
                     mainScreenContent = { MainScreen(
                         uiState = uiState,
+                        onDownloadClick = {
+                            viewModel.onDownloadScreenOpened()
+                            navHostController.navigate(Screen.Downloads.route) {
+                                popUpTo(Screen.Main.route)
+                            }
+                        },
+                        onBackClick = {
+                            navHostController.popBackStack()
+                        }
                     ) },
                     downloadsScreenContent = { DownloadsScreen(
                         uiState = uiState,
+                        onBackClick = {
+                            viewModel.onMainScreenOpened()
+                            navHostController.popBackStack()
+                        }
                     ) },
                 )
             }
