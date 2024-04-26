@@ -9,7 +9,9 @@ sealed class ScreenState {
         val temp: String
     ) : ScreenState()
 
-    data class SplashScreen(
-        val temp: String
-    ) : ScreenState()
+    sealed class SplashScreenState() : ScreenState()
+
+    object SplashScreenLoading: SplashScreenState()
+    object SplashScreenLoaded: SplashScreenState()
+
 }
