@@ -1,6 +1,9 @@
 package ru.shtykin.githubclient.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
@@ -28,35 +31,55 @@ class MainActivity : ComponentActivity() {
                 AppNavGraph(
                     startScreenRoute = startScreenRoute,
                     navHostController = navHostController,
-                    splashScreenContent = { SplashScreen(
-                        uiState = uiState,
-                        onInitLoading = {viewModel.initLoading()},
-                        onFinishLoading = {
-                            viewModel.onMainScreenOpened()
-                            navHostController.navigate(Screen.Main.route) {
-                                popUpTo(0)
+                    splashScreenContent = {
+                        SplashScreen(
+                            uiState = uiState,
+                            onInitLoading = { },
+//                            onInitLoading = { viewModel.initLoading() },
+                            onFinishLoading = {
+                                viewModel.onMainScreenOpened()
+                                navHostController.navigate(Screen.Main.route) {
+                                    popUpTo(0)
+                                }
                             }
-                        }
-                    ) },
-                    mainScreenContent = { MainScreen(
-                        uiState = uiState,
-                        onDownloadClick = {
-                            viewModel.onDownloadScreenOpened()
-                            navHostController.navigate(Screen.Downloads.route) {
-                                popUpTo(Screen.Main.route)
+                        )
+                    },
+                    mainScreenContent = {
+                        MainScreen(
+                            uiState = uiState,
+                            onDownloadClick = {
+                                viewModel.onDownloadScreenOpened()
+                                navHostController.navigate(Screen.Downloads.route) {
+                                    popUpTo(Screen.Main.route)
+                                }
+                            },
+                            onSearchClick = { user ->
+                                viewModel.getUserRepositories(
+                                    user = user,
+                                    onFailed = { msg ->
+                                        Toast.makeText(
+                                            this@MainActivity,
+                                            msg,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                )
+                            },
+                            onLinkClick = {url ->
+                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                startActivity(browserIntent)
+                            },
+                        )
+                    },
+                    downloadsScreenContent = {
+                        DownloadsScreen(
+                            uiState = uiState,
+                            onBackClick = {
+                                viewModel.onMainScreenOpened()
+                                navHostController.popBackStack()
                             }
-                        },
-                        onBackClick = {
-                            navHostController.popBackStack()
-                        }
-                    ) },
-                    downloadsScreenContent = { DownloadsScreen(
-                        uiState = uiState,
-                        onBackClick = {
-                            viewModel.onMainScreenOpened()
-                            navHostController.popBackStack()
-                        }
-                    ) },
+                        )
+                    },
                 )
             }
         }
