@@ -1,4 +1,4 @@
-package ru.shtykin.githubclient.ui.theme
+package ru.shtykin.githubclient.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
