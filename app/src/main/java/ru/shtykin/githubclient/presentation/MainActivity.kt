@@ -22,12 +22,23 @@ class MainActivity : ComponentActivity() {
             val navHostController = rememberNavController()
             val uiState by viewModel.uiState
             val startScreenRoute = Screen.Splash.route
-            GitHubClientTheme {
+            GitHubClientTheme(
+                darkTheme = false
+            ) {
                 AppNavGraph(
                     startScreenRoute = startScreenRoute,
                     navHostController = navHostController,
                     splashScreenContent = { SplashScreen(
                         uiState = uiState,
+                        onInitLoading = {viewModel.initLoading()},
+                        onFinishLoading = {
+                            viewModel.onSplashFinished()
+                            navHostController.navigate(Screen.Main.route) {
+                                popUpTo(Screen.Splash.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
                     ) },
                     mainScreenContent = { MainScreen(
                         uiState = uiState,
