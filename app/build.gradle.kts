@@ -56,6 +56,7 @@ dependencies {
     implementation ("androidx.compose.material3:material3:1.2.1")
     implementation ("androidx.compose.foundation:foundation")
     implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.compose.material:material-icons-extended:1.6.6")
 
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -75,4 +76,7 @@ dependencies {
 
     //di
     implementation("io.insert-koin:koin-android:3.5.6")
+
+    //coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }
