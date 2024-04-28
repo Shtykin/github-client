@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Download
@@ -110,6 +111,15 @@ fun MainScreen(
                 },
                 actions = {
                     if (user.text.isNotEmpty()) {
+                        IconButton(onClick = {
+                            user = TextFieldValue(text = "")
+                        }) {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
                         IconButton(onClick = {
                             if (user.text.isNotEmpty()) onSearchClick?.invoke(
                                 user.text

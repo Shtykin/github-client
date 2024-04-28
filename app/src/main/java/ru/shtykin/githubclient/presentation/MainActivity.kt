@@ -71,7 +71,10 @@ class MainActivity : ComponentActivity() {
                         })
                     },
                     downloadsScreenContent = {
-                        DownloadsScreen(uiState = uiState, onBackClick = {
+                        DownloadsScreen(
+                            uiState = uiState,
+                            onDeleteClick = viewModel::clearAllData,
+                            onBackClick = {
                             viewModel.onMainScreenOpened()
                             navHostController.popBackStack()
                         })

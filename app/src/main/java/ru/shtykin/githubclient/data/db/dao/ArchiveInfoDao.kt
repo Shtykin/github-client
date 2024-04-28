@@ -14,4 +14,7 @@ interface ArchiveInfoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(archiveInfo: ArchiveInfoDbModel)
+
+    @Query("DELETE from archive_info")
+    fun deleteAllInfo()
 }
