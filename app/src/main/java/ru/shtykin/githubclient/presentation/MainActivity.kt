@@ -2,6 +2,7 @@ package ru.shtykin.githubclient.presentation
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -43,7 +44,6 @@ class MainActivity : ComponentActivity() {
                     navHostController = navHostController,
                     splashScreenContent = {
                         SplashScreen(uiState = uiState, onInitLoading = { },
-//                            onInitLoading = { viewModel.initLoading() },
                             onFinishLoading = {
                                 viewModel.onMainScreenOpened()
                                 navHostController.navigate(Screen.Main.route) {
@@ -67,7 +67,16 @@ class MainActivity : ComponentActivity() {
                             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                             startActivity(browserIntent)
                         }, onDownloadRepositoryClick = { user, repositoryName ->
-                            if (checkStoragePermission()) downloadRepo(user, repositoryName)
+                            if (ContextCompat.checkSelfPermission(
+                                    this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                ) == PackageManager.PERMISSION_GRANTED
+                            ) {
+                                downloadRepo(user, repositoryName)
+                            } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
+                                downloadRepo(user, repositoryName)
+                            } else {
+                                requestStoragePermissions()
+                            }
                         })
                     },
                     downloadsScreenContent = {
@@ -75,9 +84,9 @@ class MainActivity : ComponentActivity() {
                             uiState = uiState,
                             onDeleteClick = viewModel::clearAllData,
                             onBackClick = {
-                            viewModel.onMainScreenOpened()
-                            navHostController.popBackStack()
-                        })
+                                viewModel.onMainScreenOpened()
+                                navHostController.popBackStack()
+                            })
                     },
                 )
             }
@@ -103,40 +112,41 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun checkStoragePermission(): Boolean {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) return true
-        val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
-        when {
-            ContextCompat.checkSelfPermission(
-                this, permission
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                return true
-            }
+    private fun requestStoragePermissions() {
+        val builder = AlertDialog.Builder(this).apply {
+            setCancelable(true)
+            setTitle("Доступ к хранилищу")
+            setMessage("Для скачивания предоставьте GitHub client доступ к хранилищу и повторите загрузку")
+            setPositiveButton(
+                "Предоставить доступ"
+            ) { _, _ ->
+                when {
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) -> {
+                        val settingsIntent = Intent().also {
+                            it.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            it.addCategory(Intent.CATEGORY_DEFAULT)
+                            it.data = Uri.parse("package:$packageName")
+                            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            it.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                            it.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                        }
+                        startActivity(settingsIntent)
+                    }
 
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this, permission
-            ) -> {
-                Toast.makeText(
-                    this,
-                    "To download a repository you should provide permission to the storage",
-                    Toast.LENGTH_LONG
-                ).show()
-                val settingsIntent = Intent().also {
-                    it.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                    it.addCategory(Intent.CATEGORY_DEFAULT)
-                    it.data = Uri.parse("package:$packageName")
-                    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    it.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                    it.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                    else -> {
+                        ActivityCompat.requestPermissions(
+                            this@MainActivity,
+                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                            RC_REQUEST_PERMISSION
+                        )
+                    }
                 }
-                startActivity(settingsIntent)
-            }
-
-            else -> {
-                ActivityCompat.requestPermissions(this, arrayOf(permission), RC_REQUEST_PERMISSION)
             }
         }
-        return false
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
     companion object {
