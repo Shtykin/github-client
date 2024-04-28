@@ -57,7 +57,6 @@ fun SplashScreen(
                             .clip(CircleShape)
                             .fillMaxSize(0.67f)
                             .aspectRatio(1f),
-                        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.background)
                     )
                 }
             }

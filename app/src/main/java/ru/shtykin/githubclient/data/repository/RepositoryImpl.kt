@@ -17,12 +17,18 @@ class RepositoryImpl(
     private val mapper: Mapper
 ) : Repository {
 
-    override suspend fun getUserRepositories(user: String): List<UserRepositoryModel> {
+    private var userRepositories: List<UserRepositoryModel> = emptyList()
+
+    override fun getUserRepositories(): List<UserRepositoryModel> =
+        userRepositories
+
+    override suspend fun getUserRepositoriesFromDb(user: String): List<UserRepositoryModel> {
         val response = apiService.getUserRepositories(user)
-        return response
+        userRepositories = response
             .body()
             ?.map {mapper.mapUserRepositoryDtoToUserRepositoryModel(it)}
             ?: emptyList()
+        return userRepositories
     }
 
     override suspend fun getFlowInfoAllArchive(): Flow<List<ArchiveInfo>> =
@@ -40,5 +46,9 @@ class RepositoryImpl(
             name = name,
             downloadDate = mapper.dateToString(date)
         ))
+    }
+
+    override fun clearAllData() {
+        db.getArchiveInfoDao().deleteAllInfo()
     }
 }

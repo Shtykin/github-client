@@ -36,8 +36,14 @@ class MainViewModel(
 
     fun onMainScreenOpened() {
         _uiState.value = ScreenState.MainScreen(
-            repositories = emptyList()
+            repositories = repository.getUserRepositories()
         )
+    }
+
+    fun clearAllData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.clearAllData()
+        }
     }
 
     fun onDownloadScreenOpened() {
@@ -73,7 +79,7 @@ class MainViewModel(
         _uiState.value = ScreenState.MainScreenLoading
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val repositories = repository.getUserRepositories(user)
+                val repositories = repository.getUserRepositoriesFromDb(user)
                 withContext(Dispatchers.Main) {
                     _uiState.value = ScreenState.MainScreen(
                         repositories = repositories
@@ -94,7 +100,6 @@ class MainViewModel(
     private suspend fun loadInitData() {
         val loadJob = viewModelScope.launch(Dispatchers.IO) {
             //load data
-            delay(8000)
         }
         val splashJob = viewModelScope.launch(Dispatchers.IO) {
             //for splash screen
