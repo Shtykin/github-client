@@ -65,6 +65,7 @@ fun MainScreen(
     onDownloadClick: (() -> Unit)?,
     onSearchClick: ((String) -> Unit)?,
     onLinkClick: ((String) -> Unit)?,
+    onDownloadRepositoryClick: ((String, String) -> Unit)?,
 ) {
 
     var user by remember { mutableStateOf(TextFieldValue(text = "")) }
@@ -151,7 +152,8 @@ fun MainScreen(
                                 items(repositories) {
                                     RepositoryCard(
                                         repository = it,
-                                        onLinkClick = onLinkClick
+                                        onLinkClick = onLinkClick,
+                                        onDownloadRepositoryClick = onDownloadRepositoryClick
                                     )
                                 }
                             }
@@ -178,6 +180,7 @@ fun MainScreen(
 fun RepositoryCard(
     repository: UserRepositoryModel,
     onLinkClick: ((String) -> Unit)?,
+    onDownloadRepositoryClick: ((String, String) -> Unit)?,
 ) {
     val progress: Int? = null
     Card(
@@ -246,7 +249,9 @@ fun RepositoryCard(
                 }
 
                 else -> {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        onDownloadRepositoryClick?.invoke(repository.user, repository.name)
+                    }) {
                         Icon(
                             modifier = Modifier.size(24.dp),
                             imageVector = Icons.Outlined.FileDownload,
