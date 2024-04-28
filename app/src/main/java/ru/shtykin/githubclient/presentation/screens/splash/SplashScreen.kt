@@ -48,7 +48,7 @@ fun SplashScreen(
             ) {
                 AnimatedVisibility(
                     visible = visible,
-                    enter = fadeIn(animationSpec = tween(2000)),
+                    enter = fadeIn(animationSpec = tween(4000)),
                 ) {
                     Image(
                         painter = painterResource(id = ru.shtykin.githubclient.R.drawable.gh_logo_rw),

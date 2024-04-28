@@ -1,6 +1,5 @@
 package ru.shtykin.githubclient.presentation.screens.main
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,6 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.FileDownload
-import androidx.compose.material.icons.outlined.FileDownloadDone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -147,7 +145,6 @@ fun MainScreen(
                                         name = repositories.first().user,
                                         avatarUrl = repositories.first().userAvatarUrl
                                     )
-
                                 }
                                 items(repositories) {
                                     RepositoryCard(
@@ -169,8 +166,6 @@ fun MainScreen(
 
                 else -> {}
             }
-
-
         }
     )
 
@@ -182,7 +177,6 @@ fun RepositoryCard(
     onLinkClick: ((String) -> Unit)?,
     onDownloadRepositoryClick: ((String, String) -> Unit)?,
 ) {
-    val progress: Int? = null
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -211,55 +205,20 @@ fun RepositoryCard(
                 )
             }
             IconButton(
-                onClick = { onLinkClick?.invoke(repository.htmlUrl)}
+                onClick = { onLinkClick?.invoke(repository.htmlUrl) }
             ) {
                 Icon(imageVector = Icons.Default.Link, contentDescription = null)
             }
             HorizontalSpace(width = 8.dp)
-            when (progress) {
-                in 0..99 -> {
-                    val interactionSource = remember { MutableInteractionSource() }
-                    HorizontalSpace(width = 2.dp)
-                    Box(
-                        modifier = Modifier.padding(12.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator(
-                            progress = { progress?.toFloat()?.div(100) ?: 0f },
-                            modifier = Modifier.size(20.dp),
-                            color = Color.Black,
-                            strokeWidth = 2.dp,
-                        )
-                    }
-                    HorizontalSpace(width = 2.dp)
-                }
-
-                100 -> {
-                    Box(
-                        modifier = Modifier.padding(12.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = Icons.Outlined.FileDownloadDone,
-                            contentDescription = null,
-                            tint = Color.Black
-                        )
-                    }
-                }
-
-                else -> {
-                    IconButton(onClick = {
-                        onDownloadRepositoryClick?.invoke(repository.user, repository.name)
-                    }) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = Icons.Outlined.FileDownload,
-                            contentDescription = null,
-                            tint = Color.Black
-                        )
-                    }
-                }
+            IconButton(onClick = {
+                onDownloadRepositoryClick?.invoke(repository.user, repository.name)
+            }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Outlined.FileDownload,
+                    contentDescription = null,
+                    tint = Color.Black
+                )
             }
         }
         HorizontalDivider()
