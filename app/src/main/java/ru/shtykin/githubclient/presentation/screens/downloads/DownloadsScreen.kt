@@ -2,9 +2,11 @@ package ru.shtykin.githubclient.presentation.screens.downloads
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Card
@@ -19,11 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.shtykin.githubclient.domain.entity.ArchiveInfo
 import ru.shtykin.githubclient.presentation.state.ScreenState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,6 +40,7 @@ fun DownloadsScreen(
 
     if (uiState is ScreenState.DownloadsScreen) {
 
+        val archivesInfo = uiState.archivesInfo
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -65,10 +70,9 @@ fun DownloadsScreen(
                 LazyColumn(
                     contentPadding = paddingValues,
                     content = {
-                        items(5) {
-                            DownloadItemCard("Shtykin/ACS-Monitoring", "2,2MB")
+                        items(archivesInfo) {
+                            DownloadItemCard(it)
                         }
-
                     }
                 )
             }
@@ -78,8 +82,7 @@ fun DownloadsScreen(
 
 @Composable
 fun DownloadItemCard(
-    name: String,
-    size: String,
+    info: ArchiveInfo
 ) {
     Card(
         modifier = Modifier
@@ -87,19 +90,29 @@ fun DownloadItemCard(
             .padding(vertical = 8.dp, horizontal = 8.dp),
         colors = CardDefaults.cardColors().copy(containerColor = Color.Transparent)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(vertical = 8.dp, horizontal = 8.dp),
+            verticalAlignment = Alignment.Bottom,
         ) {
+            Column(
+                modifier = Modifier.weight(0.1f),
+            ) {
+                Text(
+                    text = info.name,
+                    fontSize = 18.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                )
+                Text(
+                    text = info.user,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
             Text(
-                text = name,
-                fontSize = 18.sp,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-            )
-            Text(
-                text = size,
+                text = info.downloadDate,
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
