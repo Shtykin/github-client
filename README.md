@@ -7,9 +7,9 @@ ___
 
 Содержит 3 экрана:
 
-+ Splash;
-+ Search;
-+ Downloads;
++ Splash
++ Search
++ Downloads
 
 ___
 
