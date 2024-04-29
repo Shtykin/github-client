@@ -20,8 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import ru.shtykin.githubclient.R
 import ru.shtykin.githubclient.presentation.state.ScreenState
 
 @Composable
@@ -51,7 +51,7 @@ fun SplashScreen(
                     enter = fadeIn(animationSpec = tween(4000)),
                 ) {
                     Image(
-                        painter = painterResource(id = ru.shtykin.githubclient.R.drawable.gh_logo_rw),
+                        painter = painterResource(id = R.drawable.gh_logo_rw),
                         contentDescription = null,
                         modifier = Modifier
                             .clip(CircleShape)
